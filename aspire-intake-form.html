@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aspire High Youth Development Inc. | Intake Form</title>
+<style>
+:root{--navy:#1b3a6b;--ink:#0f2447;--mut:#4b5b78;--line:#c9d6ea;--bg:#eaf2fb;--red:#b3203a}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:#fff}
+.bar{max-width:1140px;margin:auto;padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:42px;height:42px;border-radius:8px;background:#fff}
+.brand b{display:block;font-size:18px;line-height:1.1}
+.brand small{font:11px monospace;letter-spacing:.08em;color:#9ec3ff}
+#lang{background:none;color:#fff;border:1px solid #8fa9d6;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+main{max-width:860px;margin:16px auto;padding:0 12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 4px 18px rgba(27,58,107,.08)}
+h2{margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--line);font-size:22px}
+h3{margin:18px 0 6px;font-size:15px;color:var(--navy)}
+p.info{color:var(--mut)}
+.alert{background:#fbeff1;border-left:4px solid var(--red);padding:12px 16px;border-radius:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.full{grid-column:1/-1}
+label.l{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+input[type=text],input[type=email],input[type=tel],input[type=date],select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+textarea{min-height:90px}
+input:focus,select:focus,textarea:focus{outline:2px solid #6c97d8;border-color:#6c97d8}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px 14px}
+.o{display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer}
+.o input{margin-top:5px}
+.note{font-size:14px;color:var(--mut);margin:8px 0}
+button.go{background:var(--navy);color:#fff;border:0;border-radius:10px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer}
+button.go:disabled{opacity:.6}
+#msg{margin-top:14px;font-weight:600}
+.bad{border-color:var(--red)!important}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="brand"><img src="logo.png" alt="" onerror="this.style.display='none'"><div><b>Aspire High</b><small>YOUTH DEVELOPMENT INC.</small></div></div>
+  <button id="lang" type="button">ES</button>
+</div></header>
+<main>
+  <div class="card">
+    <h2 data-t="K-12 Tutoring Intake Form|Formulario de inscripción de tutorías K-12">K-12 Tutoring Intake Form</h2>
+    <p class="info" data-t="To be completed by a parent/guardian of current elementary, middle and high school students.|Debe ser completado por el padre/tutor de estudiantes actuales de primaria, secundaria y preparatoria.">To be completed by a parent/guardian of current elementary, middle and high school students.</p>
+    <div class="alert" data-t="Please complete all required fields. Fields marked * are required.|Complete todos los campos obligatorios. Los campos marcados con * son obligatorios.">Please complete all required fields. Fields marked * are required.</div>
+  </div>
+  <form id="f" novalidate></form>
+</main>
+
+<script>
+const SCRIPT_URL = 'PASTE_WEB_APP_URL_HERE';
+
+const esc = s => s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const en = s => s.split('|')[0];
+const T = s => `<span data-t="${esc(s)}">${esc(en(s))}</span>`;
+
+const sfx = n => n==1?'st':n==2?'nd':n==3?'rd':'th';
+const grades = ['Kindergarten|Kínder', ...Array.from({length:12},(_,i)=>`${i+1}${sfx(i+1)} grade|${i+1}.º grado`)];
+const durations = ['Less than a week|Menos de una semana','Less than a month|Menos de un mes','Less than 6 months|Menos de 6 meses','1 year|1 año', ...Array.from({length:9},(_,i)=>`${i+2} years|${i+2} años`)];
+const days = ['Monday|Lunes','Tuesday|Martes','Wednesday|Miércoles','Thursday|Jueves','Friday|Viernes'];
+const times = ['3:00-4:00 PM','4:00-5:00 PM','5:00-6:00 PM','6:00-7:00 PM','7:00-8:00 PM','8:00-9:00 PM'];
+const yn = ['Yes|Sí','No|No','Maybe|Tal vez'];
+
+const services = [
+ ['Elementary|Primaria',['Reading & Writing|Lectura y escritura','Mathematics|Matemáticas','Science|Ciencias','Social Studies|Estudios sociales','Standardized Test (MAP, PARCC)|Pruebas estandarizadas (MAP, PARCC)','Summer Math & Language Arts|Matemáticas y Artes del Lenguaje de verano','Summer Science Program|Programa de ciencias de verano']],
+ ['Middle School|Secundaria',['English Language Arts|Artes del lenguaje en inglés','Mathematics (MS)|Matemáticas (secundaria)','Science (MS)|Ciencias (secundaria)','Social Studies (MS)|Estudios sociales (secundaria)','Foreign Language (Spanish)|Idioma extranjero (español)','Study Skills|Hábitos de estudio','Test Prep (SSAT)|Preparación SSAT','Standardized Tests (MAP, PARCC) (MS)|Pruebas estandarizadas (MAP, PARCC) (secundaria)']],
+ ['High School|Preparatoria',['English Literature & Composition|Literatura y composición en inglés','Mathematics (Algebra, Geometry, Calculus)|Matemáticas (Álgebra, Geometría, Cálculo)','Science (General, Biology, Chemistry, Physics)|Ciencias (General, Biología, Química, Física)','Social Studies (U.S. History, World History, Psychology)|Estudios sociales (Historia de EE. UU., Historia mundial, Psicología)','Foreign Languages (Spanish)|Idiomas extranjeros (español)','Advanced Placement (AP)|Cursos de Colocación Avanzada (AP)']],
+ ['Other|Otros',['Catholic High School Entrance Exam|Examen de ingreso a preparatoria católica','SAT & ACT Prep|Preparación SAT y ACT','College Application Process|Proceso de solicitud universitaria','Scholarship & Financial Aid Process|Becas y ayuda financiera','ESL Services|Servicios de ESL','GED Preparation|Preparación para el GED','Spanish, all levels|Español, todos los niveles']]
+];
+const workshops = [
+ ['Elementary Workshops|Talleres de primaria',['Understanding Emotions|Entender las emociones','Empathy and Kindness|Empatía y bondad','Building Self-Esteem|Desarrollar la autoestima','Friendship Skills|Habilidades de amistad','Conflict Resolution (Elem.)|Resolución de conflictos (primaria)','Mindfulness for Kids|Atención plena para niños','Growth Mindset|Mentalidad de crecimiento','Gratitude Practices|Prácticas de gratitud','Teamwork and Cooperation|Trabajo en equipo y cooperación']],
+ ['Middle School Workshops|Talleres de secundaria',['Self-Awareness|Autoconocimiento','Managing Stress (MS)|Manejo del estrés (secundaria)','Building Resilience|Desarrollar resiliencia','Effective Communication|Comunicación efectiva','Navigating Friendships|Manejo de amistades','Digital Citizenship|Ciudadanía digital','Mindfulness and Relaxation|Atención plena y relajación','Goal Setting|Establecer metas','Understanding Mental Health|Entender la salud mental','Coping with Change|Afrontar el cambio']],
+ ['High School Workshops|Talleres de preparatoria',['Emotional Intelligence|Inteligencia emocional','Stress Management Techniques|Técnicas de manejo del estrés','Building Healthy Relationships|Relaciones saludables','Self-Care Practices|Prácticas de autocuidado','Assertiveness Training|Entrenamiento en asertividad','Conflict Management|Manejo de conflictos','Navigating Life Transitions|Transiciones de vida','Mindfulness and Focus|Atención plena y concentración','Career and Life Goals|Metas profesionales y de vida','Diversity and Inclusion|Diversidad e inclusión']]
+];
+const reasons = ['Personalized Learning|Aprendizaje personalizado','Flexible Scheduling|Horario flexible','Access to Specialized Tutors|Acceso a tutores especializados','Comfort of Home|Comodidad del hogar','Enhanced Engagement|Mayor participación','Support for Struggling Students|Apoyo para estudiantes con dificultades','Advanced Learning Opportunities|Oportunidades de aprendizaje avanzado','Improved Academic Performance|Mejor rendimiento académico','Skill Development|Desarrollo de habilidades','Convenience for Busy Families|Conveniencia para familias ocupadas','Safety and Health Concerns|Seguridad y salud','Standardized Test Preparation|Preparación para exámenes estandarizados','Expert Guidance|Orientación de expertos','Personalized Educational Plans|Planes educativos personalizados','Navigating Learning Challenges|Apoyo ante retos de aprendizaje','College and Career Planning|Planificación universitaria y profesional','Resource Recommendations|Recomendación de recursos','Parental Support and Training|Apoyo y capacitación para padres','Transitioning Between Schools|Transición entre escuelas','Staying Updated|Mantenerse informado','Long-Term Strategy Development|Estrategia a largo plazo','Building Confidence|Desarrollar confianza'];
+const struggles = ['Reading Comprehension|Comprensión lectora','Math Skills|Matemáticas','Writing Proficiency|Escritura','Time Management|Manejo del tiempo','Study Habits|Hábitos de estudio','Test Anxiety|Ansiedad ante los exámenes','Focus and Attention|Concentración y atención','Social Skills|Habilidades sociales','Critical Thinking|Pensamiento crítico','Self-Advocacy|Autodefensa','Reading Fluency|Fluidez lectora','Motivation and Engagement|Motivación y participación','Language Proficiency (ESL)|Dominio del idioma (ESL)','Science Understanding|Comprensión de ciencias','Disorganization|Desorganización'];
+const pledges = ['Has all necessary materials ready before the session starts.|Tiene todos los materiales necesarios listos antes de la sesión.','Logs in a few minutes early.|Se conecta unos minutos antes.','Participates actively by asking questions and contributing.|Participa activamente haciendo preguntas y contribuyendo.','Communicates respectfully, avoiding inappropriate language or slang.|Se comunica con respeto, sin lenguaje inapropiado ni jerga.','Works in a quiet, well-lit space with distractions minimized.|Trabaja en un espacio tranquilo y bien iluminado, con pocas distracciones.','Keeps video on so the tutor can gauge engagement.|Mantiene la cámara encendida para que el tutor vea su participación.','Listens attentively, follows instructions and respects the tutor.|Escucha con atención, sigue instrucciones y respeta al tutor.','Asks questions when something is unclear.|Hace preguntas cuando algo no está claro.','Completes assigned work before the next session.|Completa las tareas asignadas antes de la siguiente sesión.','Approaches each session with an open mind.|Llega a cada sesión con mente abierta.','I will email any worksheet or homework 30 minutes before the session.|Enviaré por correo cualquier hoja de trabajo o tarea 30 minutos antes de la sesión.','I will complete surveys provided by the tutoring program.|Completaré las encuestas del programa de tutorías.'];
+
+// field: [type, label, required, options, fullWidth]
+const sections = [
+ ['1. Parent/Guardian & Student|1. Padre/tutor y estudiante',[
+  ['text','Parent/Guardian Name|Nombre del padre/tutor',1],
+  ['email','Parent/Guardian Email|Correo electrónico del padre/tutor',1],
+  ['tel','Parent/Guardian Phone Number|Teléfono del padre/tutor',1],
+  ['text','Name of School|Nombre de la escuela',1],
+  ['text','Student Full Name|Nombre completo del estudiante',1],
+  ['date','Student Date of Birth|Fecha de nacimiento del estudiante',1],
+  ['text','Student Address|Dirección del estudiante',1,0,1],
+  ['select','Student Grade Level|Grado del estudiante',1,grades],
+  ['select','Time in our program|Tiempo en nuestro programa',1,durations],
+  ['textarea','If more than a year: what motivates you to keep using our services?|Si lleva más de un año: ¿qué le motiva a seguir usando nuestros servicios?',0,0,1]]],
+ ['2. Services|2. Servicios',[
+  ['groups','Services for your child|Servicios para su hijo/a',1,services,1],
+  ['groups','Online workshops|Talleres en línea',1,workshops,1]]],
+ ['3. School Information|3. Información escolar',[
+  ['text','Parent Portal link, username (optional)|Enlace del portal para padres y usuario (opcional)',0,0,1],
+  ['text','Teacher education websites link, username (optional)|Sitios educativos del maestro: enlace y usuario (opcional)',0,0,1],
+  ['text','Teacher 1 (Subject, Name, Email)|Maestro 1 (Materia, nombre, correo)',1,0,1],
+  ['text','Teacher 2 (Subject, Name, Email)|Maestro 2 (Materia, nombre, correo)',0,0,1],
+  ['text','Teacher 3 (Subject, Name, Email)|Maestro 3 (Materia, nombre, correo)',0,0,1],
+  ['text','Teacher 4 (Subject, Name, Email)|Maestro 4 (Materia, nombre, correo)',0,0,1],
+  ['checks','Subjects of concern|Materias de preocupación',0,['Math|Matemáticas','Reading|Lectura','Writing|Escritura','Science|Ciencias','Social Studies|Estudios sociales'],1],
+  ['checks','Why are you seeking Education Consulting Services?|¿Por qué busca servicios de consultoría educativa?',1,reasons,1],
+  ['checks','What does your child struggle with academically?|¿En qué tiene dificultades su hijo/a?',1,struggles,1],
+  ['text','Subjects you would like us to focus on|Materias en las que desea que nos enfoquemos',0,0,1],
+  ['text','Your child\'s academic strengths|Fortalezas académicas de su hijo/a',0,0,1],
+  ['radio','Does your child have an IEP?|¿Su hijo/a tiene un IEP?',1,yn,1],
+  ['textarea','Additional comments, questions or concerns|Comentarios, preguntas o inquietudes adicionales',0,0,1]]],
+ ['4. Schedule|4. Horario',[
+  ['note','Sessions are 1 hour via Zoom, with a personalized plan, teacher check-ins and parent updates after every session.|Las sesiones son de 1 hora por Zoom, con un plan personalizado, comunicación con los maestros y avisos a los padres después de cada sesión.'],
+  ...[1,2,3,4].flatMap(n=>[
+   ['select',`Day ${n} - Day|Día ${n} - Día`,n==1,days],
+   ['select',`Day ${n} - Time|Día ${n} - Hora`,n==1,times]]),
+  ['radio','Reschedule policy: I agree sessions may only be rescheduled with one week\'s notice.|Política de reprogramación: acepto que las sesiones solo se pueden reprogramar con una semana de aviso.',1,['I agree|Estoy de acuerdo'],1],
+  ['radio','Be prepared with supplies; camera on and microphone unmuted at all times.|Estar preparado con materiales; cámara encendida y micrófono activado en todo momento.',1,['I agree|Estoy de acuerdo'],1],
+  ['radio','Be in a structured, quiet work space.|Estar en un espacio de trabajo estructurado y tranquilo.',1,['I agree|Estoy de acuerdo'],1],
+  ['radio','Be on time. Late arrivals still end at the scheduled time.|Ser puntual. Las llegadas tarde terminan a la hora programada.',1,['I agree|Estoy de acuerdo'],1]]],
+ ['5. Payment & Start Date|5. Pago y fecha de inicio',[
+  ['note','Payment is made via Zelle before sessions begin. Sessions are 1 hour: $20 for families receiving SNAP, $25 for all others.|El pago se hace por Zelle antes de iniciar las sesiones. Cada sesión es de 1 hora: $20 para familias que reciben SNAP, $25 para las demás.'],
+  ['select','Number of sessions you will pay for|Número de sesiones que pagará',1,['4 sessions|4 sesiones','8 sessions|8 sesiones','12 sessions|12 sesiones','16 sessions|16 sesiones']],
+  ['date','Desired first session date|Fecha deseada de la primera sesión',1],
+  ['text','Type your name to agree to the payment terms|Escriba su nombre para aceptar los términos de pago',1,0,1]]],
+ ['6. Student Expectations|6. Expectativas del estudiante',[
+  ['checks','I will ensure that my child:|Me aseguraré de que mi hijo/a:',1,pledges,1]]],
+ ['7. Photo Permission & Signature|7. Permiso de fotografía y firma',[
+  ['note','I give Aspire High Youth Development Inc. the right to use my child\'s picture for marketing and communication, including social media and promotional materials.|Doy a Aspire High Youth Development Inc. el derecho de usar la fotografía de mi hijo/a para marketing y comunicación, incluidas redes sociales y materiales promocionales.'],
+  ['radio','Photo permission|Permiso de fotografía',1,['I give permission|Doy permiso','I do not give permission|No doy permiso'],1],
+  ['text','Statement of verification: I have read and agree to the rules above. Type your full name as signature.|Declaración de verificación: he leído y acepto las reglas anteriores. Escriba su nombre completo como firma.',1,0,1],
+  ['date','Today\'s Date|Fecha de hoy',1]]]
+];
+
+const opt = (ty,name,s,req) => `<label class="o"><input type="${ty}" name="${esc(name)}" value="${esc(en(s))}"${req&&ty=='radio'?' required':''}>${T(s)}</label>`;
+
+function field([ty,l,req,o,full]){
+  const name = en(l), star = req?' *':'', cls = full?' full':'';
+  if(ty=='note') return `<p class="note full">${T(l)}</p>`;
+  const lab = `<label class="l">${T(l)}${star}</label>`;
+  let inner;
+  if(ty=='textarea') inner = `<textarea name="${esc(name)}"${req?' required':''}></textarea>`;
+  else if(ty=='select') inner = `<select name="${esc(name)}"${req?' required':''}><option value=""></option>${o.map(s=>`<option value="${esc(en(s))}" data-t="${esc(s)}">${esc(en(s))}</option>`).join('')}</select>`;
+  else if(ty=='checks'||ty=='radio') inner = `<div class="opts" ${ty=='checks'&&req?'data-req="1"':''}>${o.map(s=>opt(ty=='checks'?'checkbox':'radio',name,s,req)).join('')}</div>`;
+  else if(ty=='groups') inner = `<div data-req="${req?1:0}">${o.map(([h,items])=>`<h3>${T(h)}</h3><div class="opts">${items.map(s=>opt('checkbox',name,s)).join('')}</div>`).join('')}</div>`;
+  else inner = `<input type="${ty}" name="${esc(name)}"${req?' required':''}>`;
+  return `<div class="${cls.trim()}">${lab}${inner}</div>`;
+}
+
+const form = document.getElementById('f');
+form.innerHTML = sections.map(([h,fs])=>`<div class="card"><h2>${T(h)}</h2><div class="grid">${fs.map(field).join('')}</div></div>`).join('')
+ + `<div class="card"><button class="go" id="go" type="submit">${T('Submit|Enviar')}</button><div id="msg"></div></div>`;
+
+let lang = 'en';
+function setLang(l){
+  lang = l; document.documentElement.lang = l;
+  document.querySelectorAll('[data-t]').forEach(e=>{const p=e.dataset.t.split('|'); e.textContent = l=='es' ? (p[1]||p[0]) : p[0];});
+  document.getElementById('lang').textContent = l=='es' ? 'EN' : 'ES';
+  document.title = 'Aspire High Youth Development Inc.';
+}
+document.getElementById('lang').onclick = ()=>setLang(lang=='en'?'es':'en');
+const say = (en_,es_) => lang=='es'?es_:en_;
+
+form.addEventListener('submit', async ev=>{
+  ev.preventDefault();
+  const msg = document.getElementById('msg'); msg.style.color = '';
+  form.querySelectorAll('.bad').forEach(x=>x.classList.remove('bad'));
+  let ok = form.checkValidity();
+  form.querySelectorAll('[data-req="1"]').forEach(g=>{ if(!g.querySelector('input:checked')){ ok=false; g.classList.add('bad'); } });
+  if(!ok){ form.reportValidity(); msg.style.color='#b3203a'; msg.textContent = say('Please complete all required fields.','Complete todos los campos obligatorios.'); return; }
+  if(SCRIPT_URL.startsWith('PASTE')){ msg.textContent='Set SCRIPT_URL first.'; return; }
+  const body = new URLSearchParams();
+  new FormData(form).forEach((v,k)=>body.append(k,v));
+  body.append('Language', lang);
+  const btn = document.getElementById('go'); btn.disabled = true;
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body});
+    msg.style.color='#1a7f45'; msg.textContent = say('Thank you! Your form has been submitted.','¡Gracias! Su formulario ha sido enviado.');
+    form.reset(); window.scrollTo({top:0,behavior:'smooth'});
+  }catch(e){
+    msg.style.color='#b3203a'; msg.textContent = say('Something went wrong. Please try again.','Algo salió mal. Inténtelo de nuevo.');
+  }
+  btn.disabled = false;
+});
+setLang('en');
+</script>
+</body>
+</html>
